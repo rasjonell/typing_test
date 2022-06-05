@@ -54,7 +54,7 @@
         {#if row.type === "symbols"}
           <div
             id={getId(row)}
-            class={`key key__symbols ${row.extraClass && row.extraClass}`}
+            class={`key key__symbols ${row.extraClass ? row.extraClass : ""}`}
           >
             {row.content[0]} <span> {row.content[1]} </span>
           </div>
