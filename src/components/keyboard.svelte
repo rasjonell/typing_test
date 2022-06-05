@@ -1,15 +1,15 @@
 <script lang="ts">
   import { afterUpdate } from "svelte";
+
+  import { activeKey } from "../stores/keyboard";
   import KeyboardData, { keyToId } from "../data/keyborad";
 
   import type { KeyboardRowItem } from "../types/global";
 
-  export let activeKey = null;
-
   afterUpdate(() => {
-    if (activeKey === null) return;
+    if ($activeKey === null) return;
 
-    const keyElement = getElement(activeKey);
+    const keyElement = getElement($activeKey);
     if (!keyElement) return;
 
     keyElement.className = `key__active ${keyElement.className}`;
@@ -84,10 +84,11 @@
   .keyboard {
     width: 780px;
     height: 262px;
-    margin: 0px auto;
-    border: 3px solid #000000;
+    margin-bottom: 10%;
     border-radius: 10px;
     background: #000000;
+    border: 3px solid #000000;
+    box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
   }
 
   .row {
