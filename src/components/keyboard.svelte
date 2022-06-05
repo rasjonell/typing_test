@@ -1,33 +1,26 @@
 <script lang="ts">
-  import { onMount } from "svelte";
+  import { afterUpdate } from "svelte";
   import KeyboardData, { keyToId } from "../data/keyborad";
 
   import type { KeyboardRowItem } from "../types/global";
 
-  onMount(() => {
-    let timeout: NodeJS.Timeout = null;
+  export let activeKey = null;
 
-    const handler = (event: KeyboardEvent) => {
-      const keyElement = getElement(event.key);
-      console.log(`"${event.key}"`, keyElement);
+  afterUpdate(() => {
+    if (activeKey === null) return;
 
-      keyElement.className = `${keyElement.className} key__active`;
+    const keyElement = getElement(activeKey);
+    if (!keyElement) return;
 
-      timeout = setTimeout(() => {
-        const newClassName = keyElement.className.includes("key__active")
-          ? keyElement.className.replace(/ key__active/g, "")
-          : keyElement.className;
+    keyElement.className = `key__active ${keyElement.className}`;
 
-        keyElement.className = newClassName;
-      }, 100);
-    };
+    setTimeout(() => {
+      const newClassName = keyElement.className.includes("key__active")
+        ? keyElement.className.replace(/key__active /g, "")
+        : keyElement.className;
 
-    document.addEventListener("keypress", handler);
-
-    return () => {
-      document.removeEventListener("keypress", handler);
-      clearTimeout(timeout);
-    };
+      keyElement.className = newClassName;
+    }, 100);
   });
 
   function getId(item: KeyboardRowItem): string {
@@ -47,7 +40,7 @@
   }
 </script>
 
-<div class="keyboard">
+<div class="keyboard" tabindex="-1">
   {#each KeyboardData as rows}
     <div class="row">
       {#each rows as row}
