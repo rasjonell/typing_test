@@ -17,7 +17,7 @@ import type { KeyboardData } from "../types/global";
 
 const KeyboardMap: KeyboardData = [
   [
-    { type: "esc", content: "Esc" },
+    { type: "esc", content: "Esc", customId: "esc" },
     { type: "symbols", content: ["!", "1"] },
     { type: "symbols", content: ["@", "2"] },
     { type: "symbols", content: ["#", "3"] },
@@ -31,10 +31,10 @@ const KeyboardMap: KeyboardData = [
     { type: "symbols", content: ["_", "-"] },
     { type: "symbols", content: ["+", "="] },
     { type: "symbols", content: ["_", "-"] },
-    { type: "delete", content: DeleteIcon },
+    { type: "delete", content: DeleteIcon, customId: "backspace" },
   ],
   [
-    { type: "oneandhalf", content: LogInIcon },
+    { type: "oneandhalf", content: LogInIcon, customId: "tab" },
     { type: "key", content: "Q" },
     { type: "key", content: "W" },
     { type: "key", content: "E" },
@@ -50,7 +50,7 @@ const KeyboardMap: KeyboardData = [
     { type: "symbols", content: ["|", "\\"], extraClass: "key__oneandhalf" },
   ],
   [
-    { type: "caps", content: ChevronsUpIcon },
+    { type: "caps", content: ChevronsUpIcon, customId: "caps-lock" },
     { type: "key", content: "A" },
     { type: "key", content: "S" },
     { type: "key", content: "D" },
@@ -62,10 +62,10 @@ const KeyboardMap: KeyboardData = [
     { type: "key", content: "L" },
     { type: "symbols", content: [":", ";"] },
     { type: "symbols", content: ['"', "'"] },
-    { type: "enter", content: CornerDownLeftIcon },
+    { type: "enter", content: CornerDownLeftIcon, customId: "enter" },
   ],
   [
-    { type: "shift-left", content: ArrowUpCircleIcon },
+    { type: "shift-left", content: ArrowUpCircleIcon, customId: "shift-left" },
     { type: "key", content: "Z" },
     { type: "key", content: "X" },
     { type: "key", content: "C" },
@@ -77,19 +77,19 @@ const KeyboardMap: KeyboardData = [
     { type: "symbols", content: [">", "."] },
     { type: "symbols", content: ["?", "/"] },
     { type: "shift-right", content: ArrowUpCircleIcon },
-    { type: "arrow", content: ArrowUpIcon },
+    { type: "arrow", content: ArrowUpIcon, customId: "arrow-up" },
     { type: "key", content: Trash2Icon },
   ],
   [
-    { type: "bottom-funct", content: "" },
-    { type: "bottom-funct", content: ActivityIcon },
-    { type: "bottom-funct", content: CommandIcon },
+    { type: "bottom-funct", content: "^", customId: "control-left" },
+    { type: "bottom-funct", content: ActivityIcon, customId: "options" },
+    { type: "bottom-funct", content: CommandIcon, customId: "alt" },
     { type: "spacebar", content: "", customId: "spacebar" },
     { type: "key", content: CommandIcon },
     { type: "key", content: ActivityIcon },
-    { type: "arrow", content: ArrowLeftIcon },
-    { type: "arrow", content: ArrowDownIcon },
-    { type: "arrow", content: ArrowRightIcon },
+    { type: "arrow", content: ArrowLeftIcon, customId: "arrow-left" },
+    { type: "arrow", content: ArrowDownIcon, customId: "arrow-down" },
+    { type: "arrow", content: ArrowRightIcon, customId: "arrow-right" },
   ],
 ];
 
@@ -103,7 +103,20 @@ function retrieveKeyToIdMap() {
     .reduce((prev, curr, {}) => ({ ...prev, ...curr }));
 
   const customs = {
+    Alt: "alt",
+    Tab: "tab",
+    OS: "options",
+    Escape: "esc",
+    Enter: "enter",
     " ": "spacebar",
+    Shift: "shift-left",
+    ArrowUp: "arrow-up",
+    CapsLock: "caps-lock",
+    Backspace: "backspace",
+    Control: "control-left",
+    ArrowLeft: "arrow-left",
+    ArrowDown: "arrow-down",
+    ArrowRight: "arrow-right",
   };
 
   return { ...initialMap, ...customs };
