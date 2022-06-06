@@ -1,6 +1,5 @@
 <script lang="ts">
   // Core
-  import { getContext } from "svelte";
   import { scale } from "svelte/transition";
 
   // Components
