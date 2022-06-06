@@ -1,24 +1,31 @@
 <script lang="ts">
+  // Core
   import { tweened } from "svelte/motion";
-  import { onMount, tick, onDestroy } from "svelte";
+  import { onMount, tick, onDestroy, getContext } from "svelte";
 
+  // Components
+  import Stats from "./stats.svelte";
   import ProgressBar from "@okrad/svelte-progressbar";
 
+  // Helpers
   import { activeKey } from "../stores/keyboard";
   import * as WPMCalculator from "../utils/wpm_calculator";
   import attachRandomParagraph from "../utils/random_paragraph";
+
+  export let input: HTMLInputElement;
 
   let value = "";
   let paragraph: string;
   let panel: HTMLElement;
   let currentTextId = "1";
-  let input: HTMLInputElement;
   let text: HTMLSpanElement[];
   let currentElement: HTMLSpanElement;
 
   let originalTime = 60;
   let timer = tweened(originalTime);
   let interval: NodeJS.Timer = null;
+
+  const { open } = getContext("simple-modal");
 
   function reassignCurrentElement(restart = false) {
     const words = value.split(" ");
@@ -35,20 +42,16 @@
     interval = setInterval(() => {
       if ($timer > 0) $timer--;
       else {
-        const { WPM, AWPM, accuracy } = WPMCalculator.getResults(
-          paragraph,
-          value
-        );
-        alert(`
-          WPM: ${WPM}
-          AWPM: ${AWPM}
-          Accuracy: ${accuracy}%
-          `);
+        const results = WPMCalculator.getResults(paragraph, value);
+
+        /* Cleanup */
         $timer = originalTime;
         clearInterval(interval);
         interval = null;
         value = "";
         reassignCurrentElement(true);
+
+        open(Stats, results);
       }
     }, 1000);
   }

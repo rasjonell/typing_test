@@ -1,12 +1,37 @@
 <script lang="ts">
+  // Core
+  import { getContext } from "svelte";
+  import { scale } from "svelte/transition";
+
+  // Components
+  import Modal from "svelte-simple-modal";
   import Typer from "./components/typer.svelte";
   import Keyboard from "./components/keyboard.svelte";
+
+
+  let input: HTMLInputElement;
+
+  function handleModalOpen() {
+    input.disabled = true;
+  }
+
+  function handleModalClosed() {
+    input.disabled = false;
+  }
 </script>
 
-<main>
-  <Typer />
-  <Keyboard />
-</main>
+<Modal
+  closeButton={false}
+  transitionWindow={scale}
+  classWindow="modal__background"
+  on:open={handleModalOpen}
+  on:closed={handleModalClosed}
+>
+  <main>
+    <Typer bind:input />
+    <Keyboard />
+  </main>
+</Modal>
 
 <style>
   main {
@@ -25,5 +50,15 @@
     -khtml-user-select: none;
     -webkit-user-select: none;
     -webkit-touch-callout: none;
+  }
+
+  :global(.modal__background) {
+    background-color: #4158d0 !important;
+    background-image: linear-gradient(
+      135deg,
+      #4158d0 0%,
+      #c850c0 46%,
+      #ffcc70 100%
+    ) !important;
   }
 </style>

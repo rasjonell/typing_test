@@ -21,5 +21,5 @@ export default async function attachRandomParagraph(parentNode: HTMLElement) {
     parentNode.append(child, whitespace);
   }
 
-  return {paragraph, htmlText}
+  return { paragraph, htmlText };
 }
