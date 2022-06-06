@@ -11,3 +11,9 @@ interface KeyboardRowItem {
 
 type KeyboardRow = Array<KeyboardRowItem>;
 type KeyboardData = Array<KeyboardRow>;
+
+interface WPMResults {
+  WPM: number;
+  AWPM: number;
+  accuracy: number;
+}
