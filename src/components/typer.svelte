@@ -3,10 +3,10 @@
   import { activeKey } from "../stores/keyboard";
 
   let value = "";
-  let input: HTMLElement;
+  let paragraph: string;
   let panel: HTMLElement;
-  let text: HTMLSpanElement[];
   let currentTextId = "1";
+  let text: HTMLSpanElement[];
   let currentElement: HTMLSpanElement;
 
   function handleKeyUp({ key }: KeyboardEvent): void {
@@ -30,15 +30,14 @@
   }
 
   async function handleKeyDown({ key }: KeyboardEvent): Promise<void> {
-    $activeKey = key; await tick();
+    $activeKey = key;
+    await tick();
     $activeKey = null;
   }
 
   onMount(async () => {
-    input.focus();
-
     const response = await fetch("http://metaphorpsum.com/sentences/10");
-    const paragraph = await response.text();
+    paragraph = await response.text();
 
     text = paragraph.split(" ").map((word, index) => {
       const span = document.createElement("span");
@@ -71,7 +70,6 @@
     bind:value
     type="text"
     disabled={!text}
-    bind:this={input}
     on:keyup={handleKeyUp}
     on:keydown={handleKeyDown}
     placeholder="Start Typing To Start The Test"
