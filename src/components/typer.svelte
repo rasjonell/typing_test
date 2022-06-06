@@ -1,24 +1,66 @@
 <script lang="ts">
-  import { onMount, tick } from "svelte";
+  import { tweened } from "svelte/motion";
+  import { onMount, tick, onDestroy } from "svelte";
+
+  import ProgressBar from "@okrad/svelte-progressbar";
+
   import { activeKey } from "../stores/keyboard";
+  import * as WPMCalculator from "../utils/wpm_calculator";
+  import attachRandomParagraph from "../utils/random_paragraph";
 
   let value = "";
   let paragraph: string;
   let panel: HTMLElement;
   let currentTextId = "1";
+  let input: HTMLInputElement;
   let text: HTMLSpanElement[];
   let currentElement: HTMLSpanElement;
 
-  function handleKeyUp({ key }: KeyboardEvent): void {
-    const firstChild = panel.firstChild as HTMLElement;
+  let originalTime = 60;
+  let timer = tweened(originalTime);
+  let interval: NodeJS.Timer = null;
 
-    value = value.replace(/\s\s+/g, " ");
+  function reassignCurrentElement(restart = false) {
     const words = value.split(" ");
 
     currentElement.classList.remove("panel__active-word");
     currentTextId = words.length.toString();
     currentElement = document.getElementById(currentTextId);
     currentElement.classList.add("panel__active-word");
+
+    if (restart) currentElement.scrollIntoView({ behavior: "smooth" });
+  }
+
+  function initiateTimer() {
+    interval = setInterval(() => {
+      if ($timer > 0) $timer--;
+      else {
+        const { WPM, AWPM, accuracy } = WPMCalculator.getResults(
+          paragraph,
+          value
+        );
+        alert(`
+          WPM: ${WPM}
+          AWPM: ${AWPM}
+          Accuracy: ${accuracy}%
+          `);
+        $timer = originalTime;
+        clearInterval(interval);
+        interval = null;
+        value = "";
+        reassignCurrentElement(true);
+      }
+    }, 1000);
+  }
+
+  function handleKeyUp({ key }: KeyboardEvent): void {
+    if (value.length === 1 && !interval) initiateTimer();
+    const firstChild = panel.firstChild as HTMLElement;
+
+    value = value.replace(/\s\s+/g, " ");
+    const words = value.split(" ");
+
+    reassignCurrentElement();
 
     const nextElement =
       words.length < 3
@@ -36,26 +78,16 @@
   }
 
   onMount(async () => {
-    const response = await fetch("http://metaphorpsum.com/sentences/10");
-    paragraph = await response.text();
-
-    text = paragraph.split(" ").map((word, index) => {
-      const span = document.createElement("span");
-      span.textContent = word;
-      span.setAttribute("id", (index + 1).toString());
-      span.classList.add("panel__word");
-      return span;
-    });
-
-    for (const child of text) {
-      panel.appendChild(child);
-      const whitespace = document.createElement("span");
-      whitespace.textContent = " ";
-      panel.appendChild(whitespace);
-    }
+    const { paragraph: par, htmlText } = await attachRandomParagraph(panel);
+    paragraph = par;
+    text = htmlText;
 
     currentElement = document.getElementById(currentTextId);
     currentElement.classList.add("panel__active-word");
+  });
+
+  onDestroy(() => {
+    if (interval) clearInterval(interval);
   });
 </script>
 
@@ -65,15 +97,25 @@
       Getting a test paragraph...
     {/if}
   </div>
-
-  <input
-    bind:value
-    type="text"
-    disabled={!text}
-    on:keyup={handleKeyUp}
-    on:keydown={handleKeyDown}
-    placeholder="Start Typing To Start The Test"
+  <ProgressBar
+    style="thin"
+    labelColor="#ee786e"
+    showProgressValue={false}
+    width={input ? input.offsetWidth : 710}
+    series={((originalTime - $timer) * 100) / originalTime}
   />
+  <div class="typer__input-container">
+    <input
+      bind:value
+      type="text"
+      disabled={!text}
+      bind:this={input}
+      on:keyup={handleKeyUp}
+      on:keydown={handleKeyDown}
+      placeholder="Start Typing To Start The Test"
+    />
+    <span class="typer__time-left">{Math.round($timer)}s</span>
+  </div>
 </div>
 
 <style>
@@ -111,15 +153,30 @@
     text-shadow: 0 5px 20px rgba(0, 0, 0, 0.4);
   }
 
+  .typer__input-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .typer__time-left {
+    height: 50px;
+    color: white;
+    font-weight: bold;
+    font-size: xx-large;
+    transition: content 100ms linear;
+    text-shadow: 0 5px 20px rgba(0, 0, 0, 0.4);
+  }
+
   input {
-    width: 100%;
+    width: 90%;
     height: 50px;
     border: none;
     color: white;
     font-weight: bold;
     font-size: larger;
     text-align: center;
-    border-radius: 10px;
+    border-radius: 0 0 10px 10px;
     transition: background-color 500ms linear;
     background-color: rgba(255, 255, 255, 0.025);
     box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
