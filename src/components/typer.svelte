@@ -10,13 +10,10 @@
   let currentElement: HTMLSpanElement;
 
   function handleKeyUp({ key }: KeyboardEvent): void {
-    if (key === " " && value[value.length - 2] === " ") {
-      value = value.substring(0, value.length - 1);
-      return;
-    }
-
     const firstChild = panel.firstChild as HTMLElement;
-    let words = value.split(" ");
+
+    value = value.replace(/\s\s+/g, " ");
+    const words = value.split(" ");
 
     currentElement.classList.remove("panel__active-word");
     currentTextId = words.length.toString();
@@ -33,8 +30,7 @@
   }
 
   async function handleKeyDown({ key }: KeyboardEvent): Promise<void> {
-    $activeKey = key;
-    await tick();
+    $activeKey = key; await tick();
     $activeKey = null;
   }
 
@@ -43,7 +39,7 @@
 
     const response = await fetch("http://metaphorpsum.com/sentences/10");
     const paragraph = await response.text();
-  
+
     text = paragraph.split(" ").map((word, index) => {
       const span = document.createElement("span");
       span.textContent = word;
@@ -114,6 +110,7 @@
     border-radius: 10px;
     color: var(--off-white);
     background-color: var(--peach);
+    text-shadow: 0 5px 20px rgba(0, 0, 0, 0.4);
   }
 
   input {
