@@ -1,6 +1,7 @@
-export default async function attachRandomParagraph(parentNode: HTMLElement) {
-  const response = await fetch("http://metaphorpsum.com/sentences/10");
-  const paragraph = await response.text();
+import getRandomText from "./texts";
+
+export default function attachRandomParagraph(parentNode: HTMLElement) {
+  const paragraph = getRandomText();
 
   const htmlText = paragraph.split(" ").map((word, index) => {
     const span = document.createElement("span");

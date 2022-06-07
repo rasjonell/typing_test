@@ -80,8 +80,8 @@
     $activeKey = null;
   }
 
-  onMount(async () => {
-    const { paragraph: par, htmlText } = await attachRandomParagraph(panel);
+  onMount(() => {
+    const { paragraph: par, htmlText } = attachRandomParagraph(panel);
     paragraph = par;
     text = htmlText;
 
