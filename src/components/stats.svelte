@@ -44,7 +44,7 @@
       class="btn-grad"
       on:click={() =>
         window.open(
-          `https://twitter.com/intent/tweet?text=I can type ${AWPM} Accurate Words Per Minute. Can you beat my record?`
+          `https://twitter.com/intent/tweet?url=https://awpm.vercel.app/&text=I can type ${AWPM} Accurate Words Per Minute. Can you beat my record?`
         )}
     >
       Tweet Your Results!
